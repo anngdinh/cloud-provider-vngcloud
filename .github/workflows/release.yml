@@ -65,9 +65,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
+          gh release create "${{ github.ref_name }}" \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${GITHUB_REF_NAME#v}" \
+              --title="${{ github.ref_name }}" \
               --generate-notes
 
 # ${{ env.REPO }}/${{ matrix.image }}:${{ github.sha }}
