@@ -11,7 +11,7 @@ on:
 #   REPO: vcr.vngcloud.vn/81-vks-public
 
 jobs:
-  release:
+  build_package:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -60,6 +60,12 @@ jobs:
             ghcr.io/${{ github.actor }}/${{ matrix.image }}:${{ github.ref_name }}
           target: ${{ matrix.image }}
 
+  create_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
