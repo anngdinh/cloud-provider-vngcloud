@@ -1,0 +1,52 @@
+name: CI Main
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: vngcloud-ingress-controller
+          - image: vngcloud-controller-manager
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
+
+      - name: Log in to the GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch All Tags
+        run: git fetch --tags
+
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: echo "latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
+
+      - name: Display Latest Tag
+        run: echo "The latest tag is ${{ env.latest_tag }}"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: |
+            VERSION=${{ env.latest_tag }}
+          platforms: linux/amd64
+          outputs: type=registry
+          tags: |
+            ghcr.io/${{ github.actor }}/${{ matrix.image }}:${{ github.sha }}
+          target: ${{ matrix.image }}
