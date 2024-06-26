@@ -1,15 +1,17 @@
-name: CI Dev
+name: Release
+
+# git tag v1.0.0
+# git push origin v1.0.0
 
 on:
   push:
-    branches: ["dev"]
-
-env:
-  VERSION: v0.2.4
-  REPO: vcr.vngcloud.vn/60108-annd2-ingress
+    tags:
+      - "v*" # Triggers on version tags, e.g., v1.0.0
+# env:
+#   REPO: vcr.vngcloud.vn/81-vks-public
 
 jobs:
-  build-and-push-image:
+  release:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,12 +34,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Log in to the vCR
-        uses: docker/login-action@v3
-        with:
-          registry: vcr.vngcloud.vn
-          username: ${{ secrets.VCR_USER }}
-          password: ${{ secrets.VCR_PASSWORD }}
+      - name: Debug
+        run: echo ${{ github.ref }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -45,11 +43,12 @@ jobs:
           context: .
           push: true
           build-args: |
-            VERSION=${{ env.VERSION }}
+            VERSION=${{ github.ref }}
           platforms: linux/amd64
           outputs: type=registry
           tags: |
-            ghcr.io/vngcloud/${{ matrix.image }}:${{ github.sha }}
-            ${{ env.REPO }}/${{ matrix.image }}:${{ github.sha }}
-            ${{ env.REPO }}/${{ matrix.image }}:${{ env.VERSION }}
+            ghcr.io/vngcloud/${{ matrix.image }}:${{ github.ref }}
           target: ${{ matrix.image }}
+
+# ${{ env.REPO }}/${{ matrix.image }}:${{ github.sha }}
+# ${{ env.REPO }}/${{ matrix.image }}:${{ github.ref }}
