@@ -20,7 +20,7 @@ jobs:
           - image: vngcloud-ingress-controller
           - image: vngcloud-controller-manager
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
