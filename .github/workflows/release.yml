@@ -47,7 +47,7 @@ jobs:
           platforms: linux/amd64
           outputs: type=registry
           tags: |
-            ghcr.io/vngcloud/${{ matrix.image }}:${{ github.ref_name }}
+            ghcr.io/${{ github.actor }}/${{ matrix.image }}:${{ github.ref_name }}
           target: ${{ matrix.image }}
 
 # ${{ env.REPO }}/${{ matrix.image }}:${{ github.sha }}
