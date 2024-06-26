@@ -35,7 +35,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Debug
-        run: echo ${{ github.ref }}
+        run: echo ${{ github.ref_name }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -43,12 +43,12 @@ jobs:
           context: .
           push: true
           build-args: |
-            VERSION=${{ github.ref }}
+            VERSION=${{ github.ref_name }}
           platforms: linux/amd64
           outputs: type=registry
           tags: |
-            ghcr.io/vngcloud/${{ matrix.image }}:${{ github.ref }}
+            ghcr.io/vngcloud/${{ matrix.image }}:${{ github.ref_name }}
           target: ${{ matrix.image }}
 
 # ${{ env.REPO }}/${{ matrix.image }}:${{ github.sha }}
-# ${{ env.REPO }}/${{ matrix.image }}:${{ github.ref }}
+# ${{ env.REPO }}/${{ matrix.image }}:${{ github.ref_name }}
